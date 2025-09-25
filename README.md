@@ -44,8 +44,8 @@ COW React 6기 학습을 위한 리포지토리 입니다.
 | ----- | ----------- | --------------------------------------------------------------- | ---------------------------------- | --------------------------------------------------------------------------- |
 | 0주차 | 09.18       | OT, 개발 환경 세팅, GitHub/Notion 협업 규칙                     | 개강총회 & GitHub 기초 강의        | 환경 세팅, GitHub PR 체험 (README 수정)                                     |
 | 1주차 | 09.25       | DOM, Virtual DOM, MPA vs SPA, CSR vs SSR                        | 리액트 동작 방식                   | Vanilla JS ToDoList 구현 + **2주차 주제 학습 정리(md PR)**                  |
-| 휴강  | 10.05~10.08 | 추석 연휴                                                       |                                    |                                                                             |
 | 2주차 | 10.02       | React 기초 – JSX, state, props                                  | props drilling 문제점 탐구         | 1주차 과제 리팩토링 + **3주차 주제 학습 정리(md PR)**                       |
+| 휴강  | 10.05~10.08 | 추석 연휴                                                       |                                    |                                                                             |
 | 3주차 | 10.09       | React Hooks (useState, useEffect) + 라이브 코딩                 | 팀별 코드리뷰 세션                 | ToDoList 리액트로 만들기 + **4주차 주제 학습 정리(md PR)**                  |
 | 4주차 | 10.16       | CSS in JS, CSS in CSS, TailwindCSS                              | Tailwind vs Styled-components 토론 | ToDo 확장 (useRef, custom hook, Tailwind) + **5주차 주제 학습 정리(md PR)** |
 | 휴강  | 10.20~10.24 | 중간고사 기간                                                   |                                    |                                                                             |
@@ -119,7 +119,7 @@ COW React 6기 학습을 위한 리포지토리 입니다.
   <tr>
     <td align="center"><a href="https://github.com/enohs"><strong>박규빈</strong></a></td>
     <td align="center"><a href="https://github.com/wekfj"><strong>강예린</strong></a></td>
-    <td align="center"><a href="https://github.com/kwnP"><strong>김상준</strong></a></td>
+    <td align="center"><a href="https://github.com/tedtid"><strong>김상준</strong></a></td>
     <td align="center"><a href="https://github.com/yeajun001"><strong>김정빈</strong></a></td>
   </tr>
 </table>
