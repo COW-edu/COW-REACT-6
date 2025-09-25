@@ -104,22 +104,26 @@ COW React 6기 학습을 위한 리포지토리 입니다.
 <table width="100%" style="border-collapse: collapse;">
   <tr>
     <td align="center" style="padding: 10px;">
-      <img src="https://avatars.githubusercontent.com/enohs" width="100px" alt="멘티 박규빈" style="border-radius: 20%;"/>
+      <img src="https://avatars.githubusercontent.com/BXXNXXII" width="100px" alt="멘티 박규빈" style="border-radius: 20%;"/>
     </td>
     <td align="center" style="padding: 10px;">
-      <img src="https://avatars.githubusercontent.com/wekfj" width="100px" alt="멘티 강예린" style="border-radius: 20%;"/>
+      <img src="https://avatars.githubusercontent.com/rkddpfls02" width="100px" alt="멘티 강예린" style="border-radius: 20%;"/>
     </td>
     <td align="center" style="padding: 10px;">
       <img src="https://avatars.githubusercontent.com/tedtid" width="100px" alt="멘티 김상준" style="border-radius: 20%;"/>
     </td>
     <td align="center" style="padding: 10px;">
-      <img src="https://avatars.githubusercontent.com/yeajun001" width="100px" alt="멘티 김정빈" style="border-radius: 20%;"/>
+      <img src="https://avatars.githubusercontent.com/bapdodi" width="100px" alt="멘티 김정빈" style="border-radius: 20%;"/>
+    </td>
+    <td align="center" style="padding: 10px;">
+      <img src="https://avatars.githubusercontent.com/Yangseongeun108" width="100px" alt="멘티 양성은" style="border-radius: 20%;"/>
     </td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/enohs"><strong>박규빈</strong></a></td>
-    <td align="center"><a href="https://github.com/wekfj"><strong>강예린</strong></a></td>
+    <td align="center"><a href="https://github.com/BXXNXXII"><strong>박규빈</strong></a></td>
+    <td align="center"><a href="https://github.com/rkddpfls02"><strong>강예린</strong></a></td>
     <td align="center"><a href="https://github.com/tedtid"><strong>김상준</strong></a></td>
-    <td align="center"><a href="https://github.com/yeajun001"><strong>김정빈</strong></a></td>
+    <td align="center"><a href="https://github.com/bapdodi"><strong>김정빈</strong></a></td>
+    <td align="center"><a href="https://github.com/Yangseongeun108"><strong>양성은</strong></a></td>
   </tr>
 </table>
