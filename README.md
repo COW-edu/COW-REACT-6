@@ -110,7 +110,7 @@ COW React 6기 학습을 위한 리포지토리 입니다.
       <img src="https://avatars.githubusercontent.com/wekfj" width="100px" alt="멘티 강예린" style="border-radius: 20%;"/>
     </td>
     <td align="center" style="padding: 10px;">
-      <img src="https://avatars.githubusercontent.com/kwnP" width="100px" alt="멘티 김상준" style="border-radius: 20%;"/>
+      <img src="https://avatars.githubusercontent.com/tedtid" width="100px" alt="멘티 김상준" style="border-radius: 20%;"/>
     </td>
     <td align="center" style="padding: 10px;">
       <img src="https://avatars.githubusercontent.com/yeajun001" width="100px" alt="멘티 김정빈" style="border-radius: 20%;"/>
