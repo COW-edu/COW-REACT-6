@@ -1,0 +1,27 @@
+.todo-wrap{ 
+    padding: 8px 0 14px;
+}
+.todo-row{
+  display:flex; gap:10px;
+}
+.todo-input{
+  flex:1;
+  height:46px;
+  padding:0 14px;
+  font-size:15px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  outline:none;
+  background:#fff;
+}
+
+.todo-btn{
+  height:46px; padding:0 16px;
+  border:0;
+  border-radius:10px;
+  background: #ffb3ba;
+  color:#fff; 
+  font-weight:1000;
+  font-size: 13px;
+  cursor:pointer;
+}
