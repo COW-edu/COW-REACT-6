@@ -1,0 +1,64 @@
+.todo-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 5px;
+  border-bottom: 1px solid #eee;
+  font-size: 17px;
+  gap: 12px;
+}
+
+.todo-item:last-child {
+  border-bottom: none;
+}
+
+.todo-item .checkbox {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.todo-item .todo-text {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.todo-item button {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
+  margin-left: auto;
+}
+
+.todo-item button:hover {
+  background-color: #e03131;
+}
+
+/* 완료 상태 스타일 */
+.todo-item.completed .checkbox {
+  background-color: #20c997;
+  border-color: #20c997;
+}
+
+.todo-item.completed .checkbox::before {
+  content: '✔';
+  color: white;
+  font-size: 16px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: #aaa;
+}
