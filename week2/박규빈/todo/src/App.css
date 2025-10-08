@@ -1,0 +1,13 @@
+.todo-app {
+  background-color: white;
+  width: 450px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.todo-app h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+}
