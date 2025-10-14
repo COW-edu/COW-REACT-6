@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-// Simple Todo App (single-file React component)
-// - Tailwind CSS utility classes used for styling (no extra imports required)
-// - Default export is the component so you can drop this into a file like TodoApp.jsx
-// - LocalStorage persistence, add / toggle / delete, basic accessibility
+import TodoItem from "./TodoItem"; // 분리된 컴포넌트 import
 
 export default function TodoApp() {
   const [todos, setTodos] = useState(() => {
@@ -41,7 +37,9 @@ export default function TodoApp() {
   }
 
   function toggle(id) {
-    setTodos((t) => t.map((item) => (item.id === id ? { ...item, done: !item.done } : item)));
+    setTodos((t) =>
+      t.map((item) => (item.id === id ? { ...item, done: !item.done } : item))
+    );
   }
 
   function remove(id) {
@@ -53,7 +51,9 @@ export default function TodoApp() {
   }
 
   function editText(id, newText) {
-    setTodos((t) => t.map((item) => (item.id === id ? { ...item, text: newText } : item)));
+    setTodos((t) =>
+      t.map((item) => (item.id === id ? { ...item, text: newText } : item))
+    );
   }
 
   const filtered = todos.filter((t) => {
@@ -94,54 +94,50 @@ export default function TodoApp() {
           <div className="flex gap-2" role="tablist" aria-label="필터">
             <button
               onClick={() => setFilter("all")}
-              className={`px-3 py-1 rounded-lg ${filter === "all" ? "bg-slate-800 text-white" : "bg-slate-100"}`}
+              className={`px-3 py-1 rounded-lg ${
+                filter === "all" ? "bg-slate-800 text-white" : "bg-slate-100"
+              }`}
             >
               전체
             </button>
             <button
               onClick={() => setFilter("active")}
-              className={`px-3 py-1 rounded-lg ${filter === "active" ? "bg-slate-800 text-white" : "bg-slate-100"}`}
+              className={`px-3 py-1 rounded-lg ${
+                filter === "active" ? "bg-slate-800 text-white" : "bg-slate-100"
+              }`}
             >
               진행중
             </button>
             <button
               onClick={() => setFilter("completed")}
-              className={`px-3 py-1 rounded-lg ${filter === "completed" ? "bg-slate-800 text-white" : "bg-slate-100"}`}
+              className={`px-3 py-1 rounded-lg ${
+                filter === "completed" ? "bg-slate-800 text-white" : "bg-slate-100"
+              }`}
             >
               완료
             </button>
           </div>
 
           <div className="text-sm text-slate-500">
-            총 <span className="font-medium">{todos.length}</span> • 완료 <span className="font-medium">{todos.filter(t => t.done).length}</span>
+            총 <span className="font-medium">{todos.length}</span> • 완료{" "}
+            <span className="font-medium">
+              {todos.filter((t) => t.done).length}
+            </span>
           </div>
         </div>
 
-        <ul className="space-y-2"> 
+        <ul className="space-y-2">
           {filtered.length === 0 ? (
             <li className="text-center text-slate-400 py-6">할 일이 없습니다</li>
           ) : (
             filtered.map((t) => (
-              <li key={t.id} className="flex items-center gap-3 p-3 border rounded-lg">
-                <input
-                  type="checkbox"
-                  checked={t.done}
-                  onChange={() => toggle(t.id)}
-                  aria-label={`완료 체크: ${t.text}`}
-                />
-
-                <EditableText value={t.text} onSave={(newText) => editText(t.id, newText)} done={t.done} />
-
-                <div className="ml-auto flex items-center gap-2">
-                  <button
-                    onClick={() => remove(t.id)}
-                    className="text-sm px-3 py-1 rounded-md bg-red-50 text-red-700"
-                    aria-label={`삭제 ${t.text}`}
-                  >
-                    삭제
-                  </button>
-                </div>
-              </li>
+              <TodoItem
+                key={t.id}
+                todo={t}
+                onToggle={toggle}
+                onRemove={remove}
+                onEdit={editText}
+              />
             ))
           )}
         </ul>
@@ -154,55 +150,11 @@ export default function TodoApp() {
             완료된 항목 지우기
           </button>
 
-          <div className="text-sm text-slate-500">Tip: 항목을 클릭하면 수정 가능합니다.</div>
+          <div className="text-sm text-slate-500">
+            Tip: 항목을 클릭하면 수정 가능합니다.
+          </div>
         </footer>
       </div>
     </div>
-  );
-}
-
-// Small inline editable component
-function EditableText({ value, onSave, done }) {
-  const [editing, setEditing] = useState(false);
-  const [local, setLocal] = useState(value);
-
-  useEffect(() => setLocal(value), [value]);
-
-  function save() {
-    const trimmed = local.trim();
-    if (!trimmed) return; // prevent empty
-    onSave(trimmed);
-    setEditing(false);
-  }
-
-  if (editing) {
-    return (
-      <div className="flex-1">
-        <input
-          autoFocus
-          value={local}
-          onChange={(e) => setLocal(e.target.value)}
-          onBlur={save}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") save();
-            if (e.key === "Escape") {
-              setLocal(value);
-              setEditing(false);
-            }
-          }}
-          className="w-full px-2 py-1 border rounded-md focus:outline-none"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <button
-      onClick={() => setEditing(true)}
-      className={`text-left flex-1 ${done ? "line-through text-slate-400" : ""}`}
-      aria-label={`편집 ${value}`}
-    >
-      {value}
-    </button>
   );
 }
