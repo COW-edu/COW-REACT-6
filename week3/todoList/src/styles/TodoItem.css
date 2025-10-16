@@ -1,0 +1,22 @@
+.todo-item{
+  display:flex; align-items:center; gap:12px;
+  padding:12px 4px;
+  border-top:1px solid var(--border);
+}
+
+.todo-check{
+  width:20px; 
+  height:20px; 
+  cursor:pointer;
+  accent-color: #ff8b94; /* 체크 색상 */
+}
+
+.todo-text{
+  flex:1; 
+  font-size:15px; 
+}
+
+.todo-text.done{
+  color: var(--muted);
+  text-decoration: line-through;
+}
