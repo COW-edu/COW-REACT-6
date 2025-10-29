@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 export default function EditableText({ value, onSave, done }) {
   const [editing, setEditing] = useState(false);
   const [local, setLocal] = useState(value);
+  const inputRef = useRef(null);
 
   useEffect(() => setLocal(value), [value]);
+  useEffect(() => {
+    if (editing) inputRef.current?.focus();
+  }, [editing]);
 
   function save() {
     const trimmed = local.trim();
@@ -17,7 +21,7 @@ export default function EditableText({ value, onSave, done }) {
     return (
       <div className="flex-1">
         <input
-          autoFocus
+          ref={inputRef}
           value={local}
           onChange={(e) => setLocal(e.target.value)}
           onBlur={save}

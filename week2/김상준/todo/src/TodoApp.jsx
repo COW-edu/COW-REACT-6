@@ -1,59 +1,21 @@
-import React, { useEffect, useState } from "react";
-import TodoItem from "./TodoItem"; // 분리된 컴포넌트 import
+import React, { useState } from "react";
+import TodoItem from "./TodoItem";
+import { useTodo } from "./hooks/useTodo";
+import { useInput } from "./hooks/useInput";
 
 export default function TodoApp() {
-  const [todos, setTodos] = useState(() => {
-    try {
-      const raw = localStorage.getItem("todos-v1");
-      return raw ? JSON.parse(raw) : [];
-    } catch (e) {
-      return [];
-    }
-  });
-
-  const [text, setText] = useState("");
+  const { todos, addTodo, toggle, remove, clearCompleted, editText } = useTodo();
+  const { value: text, onChange, clear, inputRef } = useInput("");
   const [filter, setFilter] = useState("all"); // all | active | completed
 
-  useEffect(() => {
-    try {
-      localStorage.setItem("todos-v1", JSON.stringify(todos));
-    } catch (e) {
-      // ignore
-    }
-  }, [todos]);
-
-  function addTodo(e) {
+  function handleSubmit(e) {
     e.preventDefault();
-    const trimmed = text.trim();
-    if (!trimmed) return;
-    const newTodo = {
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
-      text: trimmed,
-      done: false,
-      createdAt: Date.now(),
-    };
-    setTodos((t) => [newTodo, ...t]);
-    setText("");
-  }
-
-  function toggle(id) {
-    setTodos((t) =>
-      t.map((item) => (item.id === id ? { ...item, done: !item.done } : item))
-    );
-  }
-
-  function remove(id) {
-    setTodos((t) => t.filter((item) => item.id !== id));
-  }
-
-  function clearCompleted() {
-    setTodos((t) => t.filter((item) => !item.done));
-  }
-
-  function editText(id, newText) {
-    setTodos((t) =>
-      t.map((item) => (item.id === id ? { ...item, text: newText } : item))
-    );
+    const result = addTodo(text);
+    if (result.success) {
+      clear();
+    } else if (result.reason === "duplicate") {
+      alert("이미 같은 할 일이 있습니다!");
+    }
   }
 
   const filtered = todos.filter((t) => {
@@ -70,14 +32,15 @@ export default function TodoApp() {
           <p className="text-sm text-slate-500">작고 빠른 React + Tailwind 예제</p>
         </header>
 
-        <form onSubmit={addTodo} className="flex gap-2 mb-4">
+        <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
           <label htmlFor="new-todo" className="sr-only">
             새 할 일
           </label>
           <input
             id="new-todo"
+            ref={inputRef}
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={onChange}
             placeholder="할 일을 입력하고 Enter를 누르세요"
             className="flex-1 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-200"
           />
