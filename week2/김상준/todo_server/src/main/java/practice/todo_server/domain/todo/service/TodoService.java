@@ -14,13 +14,12 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class TodoService {
 
     private final TodoRepository todoRepository;
     private final UserRepository userRepository;
 
-    // ✅ 유저의 할 일 목록 조회
+    // ✅ 유저의 할 일 목록 조회 (조회 전용)
     @Transactional(readOnly = true)
     public List<TodoDto> getTodosByUserNickname(String nickname) {
         User user = userRepository.findByNickname(nickname)
@@ -31,7 +30,8 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ 새 할 일 추가
+    // ✅ 새 할 일 추가 (쓰기 가능)
+    @Transactional
     public TodoDto addTodo(String nickname, String text) {
         User user = userRepository.findByNickname(nickname)
                 .orElseGet(() -> userRepository.save(new User(nickname)));
@@ -41,7 +41,8 @@ public class TodoService {
         return TodoDto.fromEntity(todoRepository.save(todo));
     }
 
-    // ✅ 완료 상태 변경 (Boolean만 반환)
+    // ✅ 완료 상태 변경
+    @Transactional
     public boolean toggleDone(Long todoId, boolean done) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 할 일입니다."));
@@ -50,6 +51,7 @@ public class TodoService {
     }
 
     // ✅ 할 일 삭제
+    @Transactional
     public void deleteTodo(Long todoId) {
         if (!todoRepository.existsById(todoId)) {
             throw new IllegalArgumentException("존재하지 않는 할 일입니다.");
