@@ -20,7 +20,7 @@ public class TodoService {
     private final UserRepository userRepository;
 
     // ✅ 유저의 할 일 목록 조회 (조회 전용)
-    @Transactional(readOnly = true)
+    @Transactional
     public List<TodoDto> getTodosByUserNickname(String nickname) {
         User user = userRepository.findByNickname(nickname)
                 .orElseGet(() -> userRepository.save(new User(nickname)));
