@@ -58,4 +58,15 @@ public class TodoService {
         }
         todoRepository.deleteById(todoId);
     }
+
+    // ✅ 할 일 내용 수정
+    @Transactional
+    public TodoDto updateTodoText(Long todoId, String newText) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 할 일입니다."));
+
+        todo.changeText(newText);  // 엔터티에 이 메서드 추가할 거야
+        return TodoDto.fromEntity(todo);
+    }
+
 }

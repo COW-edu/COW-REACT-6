@@ -46,6 +46,13 @@ public class Todo {
         this.text = newText;
     }
 
+    public void changeText(String newText) {
+        if (newText == null || newText.trim().isEmpty()) {
+            throw new IllegalArgumentException("할 일 내용은 비워둘 수 없습니다.");
+        }
+        this.text = newText;
+    }
+
     // 양방향 관계 동기화
     public void assignUser(User user) {
         this.user = user;
