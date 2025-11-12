@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import practice.todo_server.domain.todo.dto.CreateTodoRequest;
 import practice.todo_server.domain.todo.dto.TodoDto;
+import practice.todo_server.domain.todo.dto.TodoToggleRequest;
+import practice.todo_server.domain.todo.dto.TodoUpdateRequest;
 import practice.todo_server.domain.todo.service.TodoService;
 import practice.todo_server.global.dto.ApiResponse;
 import practice.todo_server.global.util.ApiResponseFactory;
@@ -37,19 +39,29 @@ public class TodoController {
 
     // ✅ 완료 상태 변경
     @PatchMapping("/todos/{id}")
-    public ResponseEntity<ApiResponse<Void>> toggleDone(
+    public ResponseEntity<ApiResponse<Boolean>> toggleDone(
             @PathVariable Long id,
-            @RequestBody Map<String, Boolean> body
+            @RequestBody TodoToggleRequest request
     ) {
-        boolean done = body.get("done");
-        todoService.toggleDone(id, done);
-        return ApiResponseFactory.ok("상태가 변경되었습니다.", null);
+        boolean result = todoService.toggleDone(id, request.isDone());
+        return ResponseEntity.ok(ApiResponse.success("상태가 변경되었습니다.", result));
     }
+
 
     // ✅ 할 일 삭제
     @DeleteMapping("/todos/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteTodo(@PathVariable Long id) {
         todoService.deleteTodo(id);
         return ApiResponseFactory.ok("할 일이 삭제되었습니다.", null);
+    }
+
+    // ✅ [PUT] 할 일 내용 수정
+    @PutMapping("/todos/{id}")
+    public ResponseEntity<ApiResponse<TodoDto>> updateTodoText(
+            @PathVariable Long id,
+            @RequestBody TodoUpdateRequest request
+    ) {
+        TodoDto updated = todoService.updateTodoText(id, request.getText());
+        return ResponseEntity.ok(ApiResponse.success("할 일 내용이 수정되었습니다.", updated));
     }
 }
