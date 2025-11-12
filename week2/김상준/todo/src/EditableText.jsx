@@ -1,52 +1,35 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 
-export default function EditableText({ value, onSave, done }) {
+export default function EditableText({ value, done, onSave }) {
   const [editing, setEditing] = useState(false);
-  const [local, setLocal] = useState(value);
-  const inputRef = useRef(null);
+  const [text, setText] = useState(value);
 
-  useEffect(() => setLocal(value), [value]);
-  useEffect(() => {
-    if (editing) inputRef.current?.focus();
-  }, [editing]);
-
-  function save() {
-    const trimmed = local.trim();
-    if (!trimmed) return;
-    onSave(trimmed);
+  function handleBlur() {
+    if (text.trim() && text !== value) {
+      onSave(text); // ✅ 수정 내용 서버로 보냄
+    }
     setEditing(false);
   }
 
-  if (editing) {
-    return (
-      <div className="flex-1">
-        <input
-          ref={inputRef}
-          value={local}
-          onChange={(e) => setLocal(e.target.value)}
-          onBlur={save}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") save();
-            if (e.key === "Escape") {
-              setLocal(value);
-              setEditing(false);
-            }
-          }}
-          className="w-full px-2 py-1 border rounded-md focus:outline-none"
-        />
-      </div>
-    );
-  }
-
-  return (
-    <button
+  return editing ? (
+    <input
+      autoFocus
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      onBlur={handleBlur}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") handleBlur();
+      }}
+      className="flex-1 px-2 py-1 border-b focus:outline-none"
+    />
+  ) : (
+    <span
       onClick={() => setEditing(true)}
-      className={`text-left flex-1 ${
-        done ? "line-through text-slate-400" : ""
+      className={`flex-1 cursor-pointer ${
+        done ? "line-through text-gray-400" : ""
       }`}
-      aria-label={`편집 ${value}`}
     >
       {value}
-    </button>
+    </span>
   );
 }

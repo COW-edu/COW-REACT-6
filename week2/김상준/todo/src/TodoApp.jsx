@@ -4,8 +4,7 @@ import { useTodo } from "./hooks/useTodo";
 import { useInput } from "./hooks/useInput";
 
 export default function TodoApp({ nickname }) {
-  // nickname은 문자열로 이미 App.jsx에서 전달됨
-  const { todos, addTodo, toggle, remove, clearCompleted } = useTodo(nickname);
+  const { todos, addTodo, toggle, remove, clearCompleted, edit } = useTodo(nickname); // ✅ edit 추가
   const { value: text, onChange, clear, inputRef } = useInput("");
   const [filter, setFilter] = useState("all");
 
@@ -83,7 +82,13 @@ export default function TodoApp({ nickname }) {
             <li className="text-center text-slate-400 py-6">할 일이 없습니다</li>
           ) : (
             filtered.map((t) => (
-              <TodoItem key={t.id} todo={t} onToggle={toggle} onRemove={remove} />
+              <TodoItem
+                key={t.id}
+                todo={t}
+                onToggle={toggle}
+                onRemove={remove}
+                onEdit={edit} // ✅ edit 연결
+              />
             ))
           )}
         </ul>

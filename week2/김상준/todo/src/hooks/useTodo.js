@@ -1,85 +1,93 @@
 import { useEffect, useState } from "react";
-import api from "../api";
+import api from "../api"; // ✅ axios 인스턴스
 
-// ✅ 닉네임별 Todo 관리 (서버 연동)
-export function useTodo(nickname = "sangjun") {
-  const [todos, setTodos] = useState([]);
+export function useTodo(nickname) {
+  const [todos, setTodos] = useState(() => {
+    const saved = localStorage.getItem(`todos_${nickname}`);
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  // 🚀 1. 서버에서 목록 불러오기
-  async function loadTodos() {
-    try {
-      const res = await api.get(`/users/${nickname}/todos`);
-      if (res.data.success) {
-        setTodos(res.data.data);
-        localStorage.setItem("todos", JSON.stringify(res.data.data));
+  // ✅ 서버에서 최신 데이터 불러오기
+  useEffect(() => {
+    async function fetchTodos() {
+      try {
+        const res = await api.get(`/users/${nickname}/todos`);
+        const latestTodos = res.data.data;
+        setTodos(latestTodos);
+        localStorage.setItem(`todos_${nickname}`, JSON.stringify(latestTodos));
+      } catch (err) {
+        console.error("❌ 할 일 목록 불러오기 실패:", err);
       }
-    } catch (err) {
-      console.error("할 일 목록 불러오기 실패:", err);
     }
-  }
 
-  // 🚀 2. 새 할 일 추가
+    if (nickname) fetchTodos();
+  }, [nickname]);
+
+  // ✅ todos가 바뀔 때마다 로컬스토리지 갱신
+  useEffect(() => {
+    if (todos && nickname) {
+      localStorage.setItem(`todos_${nickname}`, JSON.stringify(todos));
+    }
+  }, [todos, nickname]);
+
+  // ✅ 새 할 일 추가
   async function addTodo(text) {
-    if (!text.trim()) return { success: false, reason: "empty" };
-
+    if (!text.trim()) return { success: false };
     try {
       const res = await api.post(`/users/${nickname}/todos`, { text });
-      if (res.data.success) {
-        const newTodo = res.data.data;
-        const updated = [...todos, newTodo];
-        setTodos(updated);
-        localStorage.setItem("todos", JSON.stringify(updated));
-        return { success: true };
-      }
+      const newTodo = res.data.data;
+      const updated = [...todos, newTodo];
+      setTodos(updated);
+      return { success: true };
     } catch (err) {
-      console.error("할 일 추가 실패:", err);
+      console.error("❌ 할 일 추가 실패:", err);
       return { success: false };
     }
   }
 
-  // 🚀 3. 완료 상태 변경
-  async function toggle(id) {
-    const target = todos.find((t) => t.id === id);
-    if (!target) return;
+  // ✅ 완료 상태 변경
+  async function toggle(id, done) {
     try {
-      const res = await api.patch(`/todos/${id}`, { done: !target.done });
-      if (res.data.success) {
-        const updated = todos.map((t) =>
-          t.id === id ? { ...t, done: !t.done } : t
-        );
-        setTodos(updated);
-        localStorage.setItem("todos", JSON.stringify(updated));
-      }
+      await api.patch(`/todos/${id}`, { done });
+      const updated = todos.map((t) =>
+        t.id === id ? { ...t, done } : t
+      );
+      setTodos(updated);
     } catch (err) {
-      console.error("상태 변경 실패:", err);
+      console.error("❌ 완료 상태 변경 실패:", err);
     }
   }
 
-  // 🚀 4. 삭제
+  // ✅ 내용 수정 (신규)
+  async function edit(id, newText) {
+    try {
+      const res = await api.put(`/todos/${id}`, { text: newText });
+      const updatedTodo = res.data.data;
+      const updatedList = todos.map((t) =>
+        t.id === id ? updatedTodo : t
+      );
+      setTodos(updatedList);
+    } catch (err) {
+      console.error("❌ 할 일 수정 실패:", err);
+    }
+  }
+
+  // ✅ 삭제
   async function remove(id) {
     try {
-      const res = await api.delete(`/todos/${id}`);
-      if (res.data.success) {
-        const updated = todos.filter((t) => t.id !== id);
-        setTodos(updated);
-        localStorage.setItem("todos", JSON.stringify(updated));
-      }
+      await api.delete(`/todos/${id}`);
+      const updated = todos.filter((t) => t.id !== id);
+      setTodos(updated);
     } catch (err) {
-      console.error("삭제 실패:", err);
+      console.error("❌ 할 일 삭제 실패:", err);
     }
   }
 
-  // 🚀 5. 완료된 항목 일괄 삭제 (로컬에서만)
+  // ✅ 완료된 항목만 지우기
   function clearCompleted() {
     const active = todos.filter((t) => !t.done);
     setTodos(active);
-    localStorage.setItem("todos", JSON.stringify(active));
   }
 
-  // 🚀 첫 렌더 시 서버 데이터 불러오기
-  useEffect(() => {
-    loadTodos();
-  }, [nickname]);
-
-  return { todos, addTodo, toggle, remove, clearCompleted };
+  return { todos, addTodo, toggle, remove, clearCompleted, edit };
 }
