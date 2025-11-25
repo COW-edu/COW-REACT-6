@@ -1,3 +1,4 @@
+// src/EditableText.jsx
 import React, { useState } from "react";
 
 export default function EditableText({ value, done, onSave }) {
@@ -5,8 +6,10 @@ export default function EditableText({ value, done, onSave }) {
   const [text, setText] = useState(value);
 
   function handleBlur() {
-    if (text.trim() && text !== value) {
-      onSave(text); // ✅ 수정 내용 서버로 보냄
+    if (typeof onSave === "function") {
+      if (text.trim() && text !== value) {
+        onSave(text);
+      }
     }
     setEditing(false);
   }

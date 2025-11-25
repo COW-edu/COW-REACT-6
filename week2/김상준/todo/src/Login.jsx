@@ -1,35 +1,77 @@
-import React, { useState } from "react";
+// src/Login.jsx
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api, { setAuthToken } from "./api";
 
-export default function Login({ onLogin }) {
-  const [nickname, setNickname] = useState("");
+export default function Login({ onLoginSuccess }) {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  function handleSubmit(e) {
+  async function handleLogin(e) {
     e.preventDefault();
-    const trimmed = nickname.trim();
-    if (!trimmed) return alert("닉네임을 입력해주세요!");
-    localStorage.setItem("nickname", trimmed);
-    onLogin(trimmed); // ✅ 문자열만 전달해야 함
+
+    try {
+      const res = await api.post("/auth/login", { email, password });
+      const { accessToken, nickname } = res.data.data;
+
+      setAuthToken(accessToken);
+
+      // App.jsx에게 로그인 성공 알림
+      onLoginSuccess(accessToken, nickname);
+
+      // ⭐ 가장 중요! — URL을 "/"로 이동시켜 TodoApp 렌더링되게 함
+      navigate("/");
+
+    } catch (err) {
+      console.error("로그인 오류:", err);
+      alert("로그인 실패");
+    }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <div className="bg-white shadow-lg p-8 rounded-2xl w-full max-w-sm">
-        <h1 className="text-2xl font-semibold mb-4 text-center">Todo 로그인</h1>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="text"
-            placeholder="닉네임을 입력하세요"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)} // ✅ 여기서도 value만 저장
-            className="border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-slate-300"
-          />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-slate-50 p-6">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+
+        <h1 className="text-2xl font-semibold mb-6">로그인</h1>
+
+        <form className="space-y-4" onSubmit={handleLogin}>
+          <div>
+            <label className="block text-sm font-medium mb-1">이메일</label>
+            <input
+              type="email"
+              className="w-full px-4 py-2 border rounded-lg"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">비밀번호</label>
+            <input
+              type="password"
+              className="w-full px-4 py-2 border rounded-lg"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
           <button
             type="submit"
-            className="px-4 py-2 bg-slate-800 text-white rounded-lg hover:opacity-90"
+            className="w-full py-2 rounded-lg bg-slate-800 text-white"
           >
-            시작하기
+            로그인
           </button>
         </form>
+
+        <p className="text-sm text-center mt-4 text-slate-500">
+          아직 계정이 없나요?{" "}
+          <Link to="/register" className="text-slate-800 font-semibold">
+            회원가입
+          </Link>
+        </p>
       </div>
     </div>
   );

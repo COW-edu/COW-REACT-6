@@ -1,17 +1,21 @@
+// src/TodoApp.jsx
 import React, { useState } from "react";
 import TodoItem from "./TodoItem";
 import { useTodo } from "./hooks/useTodo";
 import { useInput } from "./hooks/useInput";
 
-export default function TodoApp({ nickname }) {
-  const { todos, addTodo, toggle, remove, clearCompleted, edit } = useTodo(nickname); // ✅ edit 추가
+export default function TodoApp({ nickname, onLogout }) {
+  const { todos, addTodo, toggle, remove, clearCompleted, edit } = useTodo();
   const { value: text, onChange, clear, inputRef } = useInput("");
   const [filter, setFilter] = useState("all");
 
   async function handleSubmit(e) {
     e.preventDefault();
     const result = await addTodo(text);
-    if (result.success) clear();
+
+    if (result?.success) {
+      clear();
+    }
   }
 
   const filtered = todos.filter((t) => {
@@ -20,21 +24,17 @@ export default function TodoApp({ nickname }) {
     return true;
   });
 
-  function handleLogout() {
-    localStorage.removeItem("nickname");
-    window.location.reload();
-  }
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-slate-50 p-6">
       <div className="w-full max-w-xl bg-white shadow-lg rounded-2xl p-6">
         <header className="mb-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">{nickname}의 Todo</h1>
-            <p className="text-sm text-slate-500">React + Spring Boot 연동</p>
+            <p className="text-sm text-slate-500">React + Spring Boot + JWT</p>
           </div>
+
           <button
-            onClick={handleLogout}
+            onClick={onLogout}
             className="text-sm px-3 py-1 rounded-md bg-slate-100 hover:bg-slate-200"
           >
             로그아웃
@@ -87,7 +87,7 @@ export default function TodoApp({ nickname }) {
                 todo={t}
                 onToggle={toggle}
                 onRemove={remove}
-                onEdit={edit} // ✅ edit 연결
+                onEdit={edit}   // 🔥 여기 반드시 존재해야 함
               />
             ))
           )}
@@ -101,7 +101,7 @@ export default function TodoApp({ nickname }) {
             완료된 항목 지우기
           </button>
           <div className="text-sm text-slate-500">
-            Tip: 항목을 클릭하면 수정 가능합니다.
+            항목을 클릭하면 수정 가능합니다.
           </div>
         </footer>
       </div>
