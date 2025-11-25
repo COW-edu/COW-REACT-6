@@ -1,4 +1,4 @@
-package practice.todo_server.config;
+package practice.todo_server.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

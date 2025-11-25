@@ -19,54 +19,72 @@ public class TodoService {
     private final TodoRepository todoRepository;
     private final UserRepository userRepository;
 
-    // ✅ 유저의 할 일 목록 조회 (조회 전용)
-    @Transactional
-    public List<TodoDto> getTodosByUserNickname(String nickname) {
-        User user = userRepository.findByNickname(nickname)
-                .orElseGet(() -> userRepository.save(new User(nickname)));
+    // ✅ 유저의 할 일 목록 조회
+    @Transactional(readOnly = true)
+    public List<TodoDto> getTodosByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
         return user.getTodos().stream()
                 .map(TodoDto::fromEntity)
                 .collect(Collectors.toList());
     }
 
-    // ✅ 새 할 일 추가 (쓰기 가능)
+    // ✅ 새 할 일 생성
     @Transactional
-    public TodoDto addTodo(String nickname, String text) {
-        User user = userRepository.findByNickname(nickname)
-                .orElseGet(() -> userRepository.save(new User(nickname)));
+    public TodoDto addTodo(Long userId, String text) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
 
-        Todo todo = Todo.builder().text(text).done(false).build();
+        Todo todo = Todo.builder()
+                .text(text)
+                .done(false)
+                .build();
+
         user.addTodo(todo);
+
         return TodoDto.fromEntity(todoRepository.save(todo));
     }
 
-    // ✅ 완료 상태 변경
+    // ✅ 완료 상태 변경 (보안 강화)
     @Transactional
-    public boolean toggleDone(Long todoId, boolean done) {
+    public TodoDto toggleDone(Long userId, Long todoId, boolean done) {
         Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 할 일입니다."));
-        todo.changeDoneState(done);
-        return true;
-    }
 
-    // ✅ 할 일 삭제
-    @Transactional
-    public void deleteTodo(Long todoId) {
-        if (!todoRepository.existsById(todoId)) {
-            throw new IllegalArgumentException("존재하지 않는 할 일입니다.");
+        // 🚨 내 Todo인지 확인
+        if (!todo.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("해당 할 일에 대한 권한이 없습니다.");
         }
-        todoRepository.deleteById(todoId);
-    }
 
-    // ✅ 할 일 내용 수정
-    @Transactional
-    public TodoDto updateTodoText(Long todoId, String newText) {
-        Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 할 일입니다."));
-
-        todo.changeText(newText);  // 엔터티에 이 메서드 추가할 거야
+        todo.changeDoneState(done);
         return TodoDto.fromEntity(todo);
     }
 
+    // ✅ 삭제 (보안 강화)
+    @Transactional
+    public void deleteTodo(Long userId, Long todoId) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 할 일입니다."));
+
+        if (!todo.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("해당 할 일에 대한 권한이 없습니다.");
+        }
+
+        todoRepository.delete(todo);
+    }
+
+    // ✅ 텍스트 수정 (보안 강화)
+    @Transactional
+    public TodoDto updateTodoText(Long userId, Long todoId, String newText) {
+        Todo todo = todoRepository.findById(todoId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 할 일입니다."));
+
+        if (!todo.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("해당 할 일에 대한 권한이 없습니다.");
+        }
+
+        todo.changeText(newText);
+        return TodoDto.fromEntity(todo);
+    }
 }

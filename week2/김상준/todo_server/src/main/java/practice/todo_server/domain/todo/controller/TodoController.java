@@ -2,6 +2,7 @@ package practice.todo_server.domain.todo.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import practice.todo_server.domain.todo.dto.CreateTodoRequest;
 import practice.todo_server.domain.todo.dto.TodoDto;
@@ -9,10 +10,9 @@ import practice.todo_server.domain.todo.dto.TodoToggleRequest;
 import practice.todo_server.domain.todo.dto.TodoUpdateRequest;
 import practice.todo_server.domain.todo.service.TodoService;
 import practice.todo_server.global.dto.ApiResponse;
-import practice.todo_server.global.util.ApiResponseFactory;
+import practice.todo_server.global.security.CustomUserDetails;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -21,47 +21,67 @@ public class TodoController {
 
     private final TodoService todoService;
 
-    // ✅ 목록 조회
-    @GetMapping("/users/{nickname}/todos")
-    public ResponseEntity<ApiResponse<List<TodoDto>>> getTodos(@PathVariable String nickname) {
-        return ApiResponseFactory.ok(todoService.getTodosByUserNickname(nickname));
+    // ✅ [GET] 할 일 목록 조회
+    @GetMapping("/todos")
+    public ResponseEntity<ApiResponse<List<TodoDto>>> getTodos(
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long userId = userDetails.getUserId();
+        return ResponseEntity.ok(
+                ApiResponse.success(todoService.getTodosByUserId(userId))
+        );
     }
 
-    // ✅ 새 할 일 추가
-    @PostMapping("/users/{nickname}/todos")
+    // ✅ [POST] 새 할 일 생성
+    @PostMapping("/todos")
     public ResponseEntity<ApiResponse<TodoDto>> addTodo(
-            @PathVariable String nickname,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestBody CreateTodoRequest request
     ) {
-        return ApiResponseFactory.ok("할 일이 추가되었습니다.",
-                todoService.addTodo(nickname, request.getText()));
+        Long userId = userDetails.getUserId();
+        return ResponseEntity.ok(
+                ApiResponse.success(todoService.addTodo(userId, request.getText()))
+        );
     }
 
-    // ✅ 완료 상태 변경
+    // ✅ [PATCH] 완료 상태 변경
     @PatchMapping("/todos/{id}")
-    public ResponseEntity<ApiResponse<Boolean>> toggleDone(
+    public ResponseEntity<ApiResponse<TodoDto>> toggleDone(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long id,
             @RequestBody TodoToggleRequest request
     ) {
-        boolean result = todoService.toggleDone(id, request.isDone());
-        return ResponseEntity.ok(ApiResponse.success("상태가 변경되었습니다.", result));
+        Long userId = userDetails.getUserId();
+        TodoDto updated = todoService.toggleDone(userId, id, request.isDone());
+        return ResponseEntity.ok(
+                ApiResponse.success("상태가 변경되었습니다.", updated)
+        );
     }
 
-
-    // ✅ 할 일 삭제
+    // ✅ [DELETE] 할 일 삭제
     @DeleteMapping("/todos/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteTodo(@PathVariable Long id) {
-        todoService.deleteTodo(id);
-        return ApiResponseFactory.ok("할 일이 삭제되었습니다.", null);
+    public ResponseEntity<ApiResponse<Void>> deleteTodo(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long id
+    ) {
+        Long userId = userDetails.getUserId();
+        todoService.deleteTodo(userId, id);
+        return ResponseEntity.ok(
+                ApiResponse.success("할 일이 삭제되었습니다.", null)
+        );
     }
 
     // ✅ [PUT] 할 일 내용 수정
     @PutMapping("/todos/{id}")
     public ResponseEntity<ApiResponse<TodoDto>> updateTodoText(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @PathVariable Long id,
             @RequestBody TodoUpdateRequest request
     ) {
-        TodoDto updated = todoService.updateTodoText(id, request.getText());
-        return ResponseEntity.ok(ApiResponse.success("할 일 내용이 수정되었습니다.", updated));
+        Long userId = userDetails.getUserId();
+        TodoDto updated = todoService.updateTodoText(userId, id, request.getText());
+        return ResponseEntity.ok(
+                ApiResponse.success("할 일 내용이 수정되었습니다.", updated)
+        );
     }
 }
