@@ -1,0 +1,22 @@
+{
+  "todos": [
+    {
+      "id": "1",
+      "text": "json-server 설치하기",
+      "completed": false,
+      "createdAt": "오후 8:27"
+    },
+    {
+      "id": "2",
+      "text": "useTodo 훅 수정하기",
+      "completed": true,
+      "createdAt": "오후 8:30"
+    },
+    {
+      "id": "92d5",
+      "text": "test",
+      "completed": true,
+      "createdAt": "오후 8:59"
+    }
+  ]
+}
